@@ -1,14 +1,17 @@
 package com.mm.workshopmongo.resources;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.mm.workshopmongo.domain.User;
 import com.mm.workshopmongo.dto.UserDTO;
@@ -44,5 +47,17 @@ public class UserResource {
 		
 		return ResponseEntity.ok().body(new UserDTO(usuario));
 	}
+	
+	@RequestMapping(method=RequestMethod.POST)
+	public ResponseEntity<Void> insert(@RequestBody UserDTO usuarioDto){
+		
+		User usuario = service.fromDTO(usuarioDto);
+		usuario = service.insert(usuario);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(usuario.getId()).toUri();
+		return ResponseEntity.created(uri).build();
+		
+	}
+	
+	
 
 }
